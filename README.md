@@ -143,6 +143,3 @@ vercel --prod          # Deploy to Vercel
 
 ---
 
-## 📬 Contact / Contribution
-
-Open issues or pull requests for bugs and feature suggestions. Contributions welcome!
