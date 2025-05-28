@@ -1,0 +1,399 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "assignment-1",
+              "name": "guestPhone",
+              "value": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+              "type": "string"
+            },
+            {
+              "id": "assignment-2",
+              "name": "requestText",
+              "value": "={{ $('WhatsApp Trigger').item.json.messages[0].text.body }}",
+              "type": "string"
+            },
+            {
+              "id": "assignment-4",
+              "name": "createdAt",
+              "value": "={{ $now }}",
+              "type": "string"
+            },
+            {
+              "id": "ca06b2ee-d290-46bc-8aaf-f44494371c9a",
+              "name": "status",
+              "value": "pending",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e40b34d9-c9fd-4160-9824-b259f5fa0277",
+      "name": "Extract Request Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        720,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://205d-183-83-156-73.ngrok-free.app/api/request",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "guestPhone",
+              "value": "={{ $json.guestPhone }}"
+            },
+            {
+              "name": "requestText",
+              "value": "={{ $json.requestText }}"
+            },
+            {
+              "name": "createdAt",
+              "value": "={{ $json.createdAt }}"
+            },
+            {
+              "name": "status",
+              "value": "={{ $json.status }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6b33468b-125e-44eb-b0e0-1ab247ca50ca",
+      "name": "Log to NestJS Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        980,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        20
+      ],
+      "id": "55984fa6-a393-49e3-a922-58ed2613bdbf",
+      "name": "WhatsApp Trigger",
+      "webhookId": "26133346-3b0c-4935-ac2e-b73219f556c3",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "6NBFmbp8KUYiHmil",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "653171647883233",
+        "recipientPhoneNumber": "+91 93155 81255",
+        "textBody": "Please make sure your queries are in text format.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        260,
+        180
+      ],
+      "id": "4701c921-d020-465d-b605-58fb34a13288",
+      "name": "WhatsApp Business Cloud",
+      "webhookId": "fbbe0fbe-8ae9-438b-b3d2-3351012bd808",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "IIgjcKywRs7Lbf5C",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "653171647883233",
+        "recipientPhoneNumber": "+91 93155 81255",
+        "textBody": "Request received! Our staff will assist you soon.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        -100
+      ],
+      "id": "90bf8427-28a7-43c4-9789-45d59571ad9f",
+      "name": "WhatsApp Business Cloud1",
+      "webhookId": "5e7dda27-5ca8-45f2-82fe-11fdc4149372",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "IIgjcKywRs7Lbf5C",
+          "name": "WhatsApp account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fcb3812d-088c-42c9-868e-8451b52968f4",
+              "leftValue": "={{ $json.messages[0].type }}",
+              "rightValue": "=text",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        20
+      ],
+      "id": "baa682bf-0ed2-4ddb-b06b-f01f41804ef1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ws.detectlanguage.com/0.2/detect",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer cd3136b1ab158084739a4e65747d4b41"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.messages[0].text.body }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        220,
+        -80
+      ],
+      "id": "70180547-afa2-4100-a453-196321039c40",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "e7a73005-1b4a-4100-9caf-ec2a2ab943af",
+              "leftValue": "={{ $json.data.detections[0].language }}",
+              "rightValue": "en",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "695e579a-fa31-4e1e-988a-664c2992b988",
+              "leftValue": "={{ $json.data.detections[0].isReliable }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        -80
+      ],
+      "id": "4ef30699-3396-47a2-b96c-6d0a4b02b071",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "653171647883233",
+        "recipientPhoneNumber": "+91 9315581255",
+        "textBody": "Sorry, we can take queries only in English as of now.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [
+        620,
+        140
+      ],
+      "id": "eb062d8a-acff-47f6-99e3-4c27f6ee9b0d",
+      "name": "WhatsApp Business Cloud2",
+      "webhookId": "8ab36e6e-23c0-4efd-b516-7a32990d4a94",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "IIgjcKywRs7Lbf5C",
+          "name": "WhatsApp account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Extract Request Data": {
+      "main": [
+        [
+          {
+            "node": "Log to NestJS Backend",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to NestJS Backend": {
+      "main": [
+        [
+          {
+            "node": "WhatsApp Business Cloud1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Business Cloud1": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "WhatsApp Business Cloud",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Extract Request Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "WhatsApp Business Cloud2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bc44d990-2581-4232-b661-a682837dab92",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2dcba1fc37f835965688cf435cdf8e78550d279801ddd84b607d3e1b6036e712"
+  },
+  "id": "cYQQiG5748lKrcyu",
+  "tags": []
+}
