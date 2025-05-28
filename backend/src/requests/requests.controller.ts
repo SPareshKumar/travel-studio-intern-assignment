@@ -17,4 +17,4 @@ export class RequestsController {
     async findAllPending() {
         return await this.requestService.findAllPending();
     }
-}
+} 
